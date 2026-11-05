@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Dónde vive cada animal?</title>
+<style>
+:root{--ink:#28344a;--cream:#fff9e9;--green:#61b94b;--blue:#5ec9f2;--pink:#ff9db8;--gold:#ffd45c}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;color:var(--ink);background:linear-gradient(#a8e8ff 0 52%,#d9f6b4 52% 100%);min-height:100vh}
+main{max-width:1100px;margin:auto;padding:22px}
+header{text-align:center;background:#ffcf76;border:5px solid #e6a842;border-radius:28px;padding:16px 18px;box-shadow:0 6px 0 #ca9133;margin-bottom:20px}
+h1{margin:0;font-size:clamp(1.8rem,4vw,3rem);color:#55351c}
+header p{margin:8px 0 0;font-size:1.2rem;font-weight:700}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 14px}
+.counter{background:var(--cream);border:3px solid #e9b84b;border-radius:18px;padding:8px 15px;font-size:1.1rem;font-weight:bold}
+.progress{height:14px;background:#ffffffa8;border:2px solid white;border-radius:20px;overflow:hidden;flex:1}
+.progress span{display:block;height:100%;width:0;background:#70c94d;transition:width .3s}
+.layout{display:grid;grid-template-columns:1fr 1.2fr;gap:20px}
+.panel{background:#ffffffd9;border:3px solid white;border-radius:24px;padding:16px;box-shadow:0 5px 0 #90c5cf}
+h2{font-size:1.25rem;margin:0 0 12px}
+.animals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.animal{border:3px solid #e5e5e5;background:var(--cream);border-radius:18px;padding:12px 8px;cursor:pointer;text-align:center;transition:transform .15s,border-color .15s;min-height:110px}
+.animal:hover{transform:translateY(-3px)}
+.animal.selected{border-color:#8a67dc;background:#f1eaff;box-shadow:0 0 0 3px #d8c6ff}
+.animal.done{border-color:#69bd52;background:#eaffdf}
+.emoji{display:block;font-size:2.6rem;line-height:1.15}
+.animal strong{display:block;margin-top:5px;font-size:1rem}
+.habitats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.habitat{border:3px solid white;border-radius:18px;min-height:108px;padding:10px;cursor:pointer;text-align:center;font-weight:bold;font-size:1.05rem;box-shadow:0 3px 0 #c3d4d5;transition:transform .15s}
+.habitat:hover{transform:scale(1.025)}
+.habitat .emoji{font-size:2.3rem}
+.forest{background:#d7f5c6}.polar{background:#d9f2ff}.desert{background:#ffe5a7}.ocean{background:#c8eaff}.pond{background:#d4f8ef}.farm{background:#ffdfeb}
+.habitat.chosen{outline:4px solid #7a59d1;outline-offset:1px}
+.controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:20px 0}
+button{border:0;border-radius:16px;padding:13px 22px;font-size:1.08rem;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 #3f8c2e}
+#check{background:#72ca4d;color:#173e12}
+#reset{background:#fff0c8;color:#6a461b;box-shadow:0 4px 0 #d9b65c}
+#message{min-height:42px;text-align:center;font-size:1.2rem;font-weight:bold;padding:8px}
+footer{text-align:center;font-size:.95rem;padding:12px;color:#35505c}
+@media(max-width:700px){main{padding:12px}.layout{grid-template-columns:1fr}.animals,.habitats{grid-template-columns:repeat(2,minmax(0,1fr))}header p{font-size:1rem}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>🌎 ¿Dónde vive cada animal? 🐾</h1>
+<p>¡Elegí un animal y descubrí su hábitat!</p>
+</header>
+<div class="topline">
+<div class="counter" id="counter">⭐ 0 de 6</div>
+<div class="progress" aria-label="Progreso"><span id="bar"></span></div>
+</div>
+<div class="layout">
+<section class="panel">
+<h2>🐾 1. Elegí un animal</h2>
+<div class="animals" id="animals">
+<button class="animal" data-animal="leon"><span class="emoji">🦁</span><strong>León</strong></button>
+<button class="animal" data-animal="pinguino"><span class="emoji">🐧</span><strong>Pingüino</strong></button>
+<button class="animal" data-animal="camello"><span class="emoji">🐫</span><strong>Camello</strong></button>
+<button class="animal" data-animal="delfin"><span class="emoji">🐬</span><strong>Delfín</strong></button>
+<button class="animal" data-animal="rana"><span class="emoji">🐸</span><strong>Rana</strong></button>
+<button class="animal" data-animal="mono"><span class="emoji">🐒</span><strong>Mono</strong></button>
+</div>
+</section>
+<section class="panel">
+<h2>🏡 2. ¿Dónde vive?</h2>
+<div class="habitats">
+<button class="habitat forest" data-habitat="bosque"><span class="emoji">🌳</span>Bosque</button>
+<button class="habitat polar" data-habitat="polo"><span class="emoji">🧊</span>Polo / zonas frías</button>
+<button class="habitat desert" data-habitat="desierto"><span class="emoji">🌵</span>Desierto</button>
+<button class="habitat ocean" data-habitat="mar"><span class="emoji">🌊</span>Mar / océano</button>
+<button class="habitat pond" data-habitat="laguna"><span class="emoji">🪷</span>Laguna</button>
+<button class="habitat farm" data-habitat="selva"><span class="emoji">🌴</span>Selva</button>
+</div>
+</section>
+</div>
+<div id="message" role="status">💡 Primero tocá un animal y luego su hábitat.</div>
+<div class="controls">
+<button id="check">✅ ¡Comprobar!</button>
+<button id="reset">🔄 Jugar de nuevo</button>
+</div>
+<footer>Juego educativo · Exploramos y aprendemos sobre los animales y sus ambientes</footer>
+</main>
+<script>
+const correct={leon:"bosque",pinguino:"polo",camello:"desierto",delfin:"mar",rana:"laguna",mono:"selva"};
+const names={leon:"el león",pinguino:"el pingüino",camello:"el camello",delfin:"el delfín",rana:"la rana",mono:"el mono"};
+let selectedAnimal=null,answers={},checked={};
+const animalEls=[...document.querySelectorAll(".animal")],habitatEls=[...document.querySelectorAll(".habitat")];
+const message=document.getElementById("message");
+animalEls.forEach(el=>el.addEventListener("click",()=>{
+ if(checked[el.dataset.animal])return;
+ selectedAnimal=el.dataset.animal;
+ animalEls.forEach(a=>a.classList.toggle("selected",a===el));
+ habitatEls.forEach(h=>h.classList.remove("chosen"));
+ message.textContent="Ahora elegí dónde vive "+names[selectedAnimal]+" 👀";
+}));
+habitatEls.forEach(el=>el.addEventListener("click",()=>{
+ if(!selectedAnimal){message.textContent="¡Primero elegí un animal! 🐾";return}
+ answers[selectedAnimal]=el.dataset.habitat;
+ habitatEls.forEach(h=>h.classList.toggle("chosen",h===el));
+ const animal=animalEls.find(a=>a.dataset.animal===selectedAnimal);
+ animal.querySelector("strong").textContent=animal.querySelector("strong").textContent.split(" ✓")[0]+" → "+el.textContent.trim();
+ animal.classList.add("selected");
+ message.textContent="¡Muy bien! Tocá «Comprobar» para ver si acertaste. ✨";
+}));
+document.getElementById("check").addEventListener("click",()=>{
+ let correctCount=0,attempted=0;
+ for(const key of Object.keys(correct)){
+  if(answers[key]){
+   attempted++;
+   if(answers[key]===correct[key]){correctCount++;checked[key]=true;
+    const el=animalEls.find(a=>a.dataset.animal===key);el.classList.remove("selected");el.classList.add("done");
+    el.querySelector("strong").textContent=el.querySelector("strong").textContent.replace(" ✓","")+" ✓";
+   }else{checked[key]=false}
+  }
+ }
+ document.getElementById("counter").textContent=`⭐ ${correctCount} de 6`;
+ document.getElementById("bar").style.width=(correctCount/6*100)+"%";
+ if(correctCount===6){message.textContent="🎉 ¡Felicitaciones! ¡Encontraste todos los hábitats!";confettiText()}
+ else if(attempted===0){message.textContent="Elegí al menos un animal y su hábitat para comprobar."}
+ else{message.textContent=`¡Vas muy bien! ${correctCount} respuestas correctas. ¡Seguí intentando! 💪`}
+});
+function confettiText(){message.textContent="🎉 ¡Excelente explorador/a! ¡Completaste todos los desafíos! 🌟"}
+document.getElementById("reset").addEventListener("click",()=>{
+ selectedAnimal=null;answers={};checked={};
+ animalEls.forEach(el=>{el.classList.remove("selected","done");const key=el.dataset.animal;el.querySelector("strong").textContent={leon:"León",pinguino:"Pingüino",camello:"Camello",delfin:"Delfín",rana:"Rana",mono:"Mono"}[key]});
+ habitatEls.forEach(h=>h.classList.remove("chosen"));
+ document.getElementById("counter").textContent="⭐ 0 de 6";document.getElementById("bar").style.width="0%";
+ message.textContent="💡 ¡Empecemos de nuevo! Elegí un animal.";
+});
+</script>
+</body>
+</html>
